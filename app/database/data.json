@@ -9,6 +9,11 @@
       "id": 2,
       "title": "Sample Issue 2",
       "description": "This is the second issue."
+    },
+    {
+      "id": 3,
+      "title": "Updated Issue",
+      "description": "This issue has been updated."
     }
   ]
 }

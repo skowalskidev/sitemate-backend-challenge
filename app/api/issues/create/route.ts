@@ -8,12 +8,10 @@ export async function POST(request: Request) {
         const data = JSON.parse(fs.readFileSync(dataFilePath, 'utf8'));
 
         // Generate a new unique ID (for simplicity, increment the last ID)
-        const newId =
-            data.issues.length > 0 ? data.issues[data.issues.length - 1].id + 1 : 1;
+        const newId = data.issues.length > 0 ? data.issues[data.issues.length - 1].id + 1 : 1;
 
         // Extract the data from the request body
-        // @ts-ignore
-        const { title, description } = request.body;
+        const { title, description } = await request.json(); // Parse the JSON request body
 
         // Create a new issue object
         const newIssue = {

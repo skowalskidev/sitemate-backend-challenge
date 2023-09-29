@@ -1,16 +1,14 @@
-// pages/index.js
-"use client"
-
-import { useState } from 'react';
+"use client";
+import { useEffect, useState } from 'react';
 
 const Home = () => {
   const [response, setResponse] = useState('');
+  const [issues, setIssues] = useState([]);
 
   const handleCreate = async () => {
     const newIssue = {
-      id: 1,
       title: 'New Issue',
-      description: 'This is a new issue.'
+      description: 'This is a new issue.',
     };
 
     try {
@@ -18,12 +16,13 @@ const Home = () => {
         method: 'POST',
         body: JSON.stringify(newIssue),
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       });
 
       const data = await res.json();
       setResponse(`Created Issue: ${JSON.stringify(data)}`);
+      handleRead(); // Fetch and display issues after creating
     } catch (error) {
       console.error(error);
       setResponse('Error creating issue');
@@ -34,18 +33,25 @@ const Home = () => {
     try {
       const res = await fetch('/api/issues/read');
       const data = await res.json();
-      setResponse(`Read Issue: ${JSON.stringify(data)}`);
+      console.log(data);
+
+      // Check if the response is an array of issues
+      if (Array.isArray(data)) {
+        setIssues(data); // Store the array of issues in state
+        setResponse('Read Issues');
+      } else {
+        setResponse('Error: Data format is not as expected');
+      }
     } catch (error) {
       console.error(error);
-      setResponse('Error reading issue');
+      setResponse('Error reading issues');
     }
   };
 
   const handleUpdate = async () => {
     const updatedIssue = {
-      id: 1,
       title: 'Updated Issue',
-      description: 'This issue has been updated.'
+      description: 'This issue has been updated.',
     };
 
     try {
@@ -53,12 +59,13 @@ const Home = () => {
         method: 'PUT',
         body: JSON.stringify(updatedIssue),
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       });
 
       const data = await res.json();
       setResponse(`Updated Issue: ${JSON.stringify(data)}`);
+      handleRead(); // Fetch and display issues after updating
     } catch (error) {
       console.error(error);
       setResponse('Error updating issue');
@@ -68,16 +75,22 @@ const Home = () => {
   const handleDelete = async () => {
     try {
       const res = await fetch('/api/issues/delete', {
-        method: 'DELETE'
+        method: 'DELETE',
       });
 
       const data = await res.json();
       setResponse(`Deleted Issue: ${JSON.stringify(data)}`);
+      handleRead(); // Fetch and display issues after deleting
     } catch (error) {
       console.error(error);
       setResponse('Error deleting issue');
     }
   };
+
+  useEffect(() => {
+    // Load issues when the component mounts
+    handleRead();
+  }, []);
 
   return (
     <div className="p-4">
@@ -102,7 +115,7 @@ const Home = () => {
           />
         </svg>
       </button>
-      <button
+      {/* <button
         onClick={handleRead}
         className="bg-green-500 hover:bg-green-600 text-white font-semibold rounded-full py-2 px-4 mb-2 flex items-center space-x-2"
       >
@@ -121,7 +134,7 @@ const Home = () => {
             d="M6 9l6 6 6-6"
           />
         </svg>
-      </button>
+      </button> */}
       <button
         onClick={handleUpdate}
         className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-full py-2 px-4 mb-2 flex items-center space-x-2"
@@ -141,7 +154,6 @@ const Home = () => {
             d="M6 9l6 6 6-6"
           />
         </svg>
-
       </button>
       <button
         onClick={handleDelete}
@@ -164,6 +176,13 @@ const Home = () => {
         </svg>
       </button>
       <p className="mt-4">{response}</p>
+      {/* Render rounded boxes for each issue */}
+      {issues.map((issue: any) => (
+        <div key={issue.id} className="rounded-lg border p-4 mb-4">
+          <h2 className="text-lg font-semibold">{issue.title}</h2>
+          <p className="text-gray-600">{issue.description}</p>
+        </div>
+      ))}
     </div>
   );
 };
