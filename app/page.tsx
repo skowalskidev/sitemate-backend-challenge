@@ -147,7 +147,7 @@ const Home = () => {
         onClick={handleDelete}
         className="bg-red-500 hover:bg-red-600 text-white font-semibold rounded-full py-2 px-4 flex items-center space-x-2"
       >
-        <span>Delete Issue</span>
+        <span>Delete Last Issue</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-4 w-4"
