@@ -37,6 +37,7 @@ const Home = () => {
 
       // Check if the response is an array of issues
       if (Array.isArray(data)) {
+        // @ts-ignore
         setIssues(data); // Store the array of issues in state
         setResponse('Read Issues');
       } else {
@@ -48,14 +49,14 @@ const Home = () => {
     }
   };
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (issueId: number) => {
     const updatedIssue = {
       title: 'Updated Issue',
       description: 'This issue has been updated.',
     };
 
     try {
-      const res = await fetch('/api/issues/update', {
+      const res = await fetch(`/api/issues/${issueId}/update`, {
         method: 'PUT',
         body: JSON.stringify(updatedIssue),
         headers: {
@@ -72,9 +73,10 @@ const Home = () => {
     }
   };
 
-  const handleDelete = async () => {
+
+  const handleDelete = async (issueId: number) => {
     try {
-      const res = await fetch('/api/issues/delete', {
+      const res = await fetch(`/api/issues/${issueId}/delete`, {
         method: 'DELETE',
       });
 
@@ -115,74 +117,58 @@ const Home = () => {
           />
         </svg>
       </button>
-      {/* <button
-        onClick={handleRead}
-        className="bg-green-500 hover:bg-green-600 text-white font-semibold rounded-full py-2 px-4 mb-2 flex items-center space-x-2"
-      >
-        <span>Read Issue</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-4 w-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M6 9l6 6 6-6"
-          />
-        </svg>
-      </button> */}
-      <button
-        onClick={handleUpdate}
-        className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-full py-2 px-4 mb-2 flex items-center space-x-2"
-      >
-        <span>Update Issue</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-4 w-4 transform rotate-180"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M6 9l6 6 6-6"
-          />
-        </svg>
-      </button>
-      <button
-        onClick={handleDelete}
-        className="bg-red-500 hover:bg-red-600 text-white font-semibold rounded-full py-2 px-4 flex items-center space-x-2"
-      >
-        <span>Delete Last Issue</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-4 w-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
+      <div className="mt-6">
+        {/* Render rounded boxes for each issue */}
+        {issues.map((issue: any) => (
+          <div key={issue.id} className="rounded-lg border p-4 mb-4">
+            <h2 className="text-lg font-semibold">{issue.title}</h2>
+            <p className="text-gray-600">{issue.description}</p>
+            <div className='flex'>
+              <button
+                onClick={() => handleUpdate(issue.id)}
+                className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-full py-2 px-4 mt-2 flex items-center space-x-2"
+              >
+                <span>Update Issue</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 transform rotate-180"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 9l6 6 6-6"
+                  />
+                </svg>
+              </button>
+              <button
+                onClick={() => handleDelete(issue.id)}
+                className="bg-red-500 hover:bg-red-600 text-white font-semibold rounded-full py-2 px-4 mt-2 flex items-center space-x-2"
+              >
+                <span>Delete Issue</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
       <p className="mt-4">{response}</p>
-      {/* Render rounded boxes for each issue */}
-      {issues.map((issue: any) => (
-        <div key={issue.id} className="rounded-lg border p-4 mb-4">
-          <h2 className="text-lg font-semibold">{issue.title}</h2>
-          <p className="text-gray-600">{issue.description}</p>
-        </div>
-      ))}
     </div>
   );
 };
